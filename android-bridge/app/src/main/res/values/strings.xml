@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PvZ AI Bridge</string>
+    <string name="accessibility_description">Lets the PvZ AI Agent capture the screen and perform taps/swipes through Android Accessibility.</string>
+</resources>
