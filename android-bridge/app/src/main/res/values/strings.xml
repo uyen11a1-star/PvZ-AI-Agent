@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">PvZ AI Bridge</string>
-    <string name="accessibility_description">Local bridge for the user's own PvZ AI test agent. It captures the screen only when requested and performs taps/swipes only when commanded by the local agent.</string>
+    <string name="accessibility_description">PvZ AI Bridge uses Accessibility to capture the game screen and perform touch gestures for the game assistant.</string>
 </resources>
