@@ -59,3 +59,14 @@ Only after the vision decisions look sensible should you set `DRY_RUN=0` and run
 - Screenshot capture is rate-limited by the Python agent.
 - The Python agent skips repeated identical images.
 - This is a prototype; game UI/state detection should be made more structured before relying on autonomous gameplay.
+
+
+## v3 release build
+
+GitHub Actions now builds a signed release APK for local testing and emits a SHA-256 checksum. The CI signing key is intentionally temporary for this prototype, so future builds are not upgrade-compatible with previous builds. Do not treat the APK as a Play-distributed/trusted app.
+
+### Accessibility scope
+The service declares only window-state events, does not retrieve window content, and exposes screenshot/gesture capabilities required by the local bridge. The service is explicitly marked as not an accessibility tool because it is an automation/testing bridge, not an assistive technology.
+
+### Play Protect
+A sideloaded app that requests powerful Accessibility capabilities can still be warned about or blocked by Android/Google Play Protect. Signing the APK does not guarantee bypass of those protections. If Android blocks the APK, do not disable device security merely to force installation; use a trusted development device/build path instead.

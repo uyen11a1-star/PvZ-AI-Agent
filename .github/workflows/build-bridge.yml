@@ -1,4 +1,5 @@
 name: Build PvZ AI Bridge APK
+
 on:
   workflow_dispatch:
   push:
@@ -9,16 +10,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - working-directory: android-bridge
-        run: gradle assembleDebug --no-daemon
+
+      - name: Generate temporary signing key
+        working-directory: android-bridge
+        run: |
+          keytool -genkeypair -v \
+            -keystore release-keystore.jks \
+            -storepass android \
+            -keypass android \
+            -alias pvzai \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 3650 \
+            -dname "CN=PvZ AI Bridge, OU=Local, O=Huy, L=Unknown, ST=Unknown, C=VN"
+
+      - name: Build signed release APK
+        working-directory: android-bridge
+        env:
+          SIGNING_STORE_FILE: release-keystore.jks
+          SIGNING_STORE_PASSWORD: android
+          SIGNING_KEY_ALIAS: pvzai
+          SIGNING_KEY_PASSWORD: android
+        run: |
+          gradle assembleRelease --no-daemon
+
+      - name: Verify APK
+        working-directory: android-bridge
+        run: |
+          ls -lh app/build/outputs/apk/release/app-release.apk
+          sha256sum app/build/outputs/apk/release/app-release.apk | tee app/build/outputs/apk/release/SHA256SUM.txt
+
       - uses: actions/upload-artifact@v4
         with:
-          name: pvz-ai-bridge-debug
-          path: android-bridge/app/build/outputs/apk/debug/app-debug.apk
+          name: pvz-ai-bridge-release
+          path: |
+            android-bridge/app/build/outputs/apk/release/app-release.apk
+            android-bridge/app/build/outputs/apk/release/SHA256SUM.txt
